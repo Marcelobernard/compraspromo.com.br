@@ -2,6 +2,22 @@ import tkinter as tk
 from tkinter import messagebox, simpledialog
 import json
 
+# Definição de cores e estilos
+COLORS = {
+    'primary': '#47ba00',
+    'danger': '#e74c3c',
+    'background': '#f0f0f0',
+    'text': '#333333',
+    'white': '#ffffff'
+}
+
+STYLES = {
+    'title_font': ('Arial', 16, 'bold'),
+    'heading_font': ('Arial', 14, 'bold'),
+    'text_font': ('Arial', 12),
+    'button_font': ('Arial', 12)
+}
+
 def load_products():
     try:
         with open('produtos.json', 'r') as file:
@@ -24,29 +40,75 @@ def show_products(page=1, search_query=""):
         widget.destroy()
     
     for product in filtered_products[start:end]:
-        button = tk.Button(frame_list, text=product['nome'], command=lambda p=product: show_product_details(p), 
-                           font=('Arial', 14, 'bold'), relief="solid", bd=1, 
-                           width=35, height=2, anchor='w', justify='left', padx=10, pady=5)
+        button = tk.Button(frame_list, 
+                          text=product['nome'], 
+                          command=lambda p=product: show_product_details(p),
+                          font=STYLES['text_font'],
+                          bg=COLORS['white'],
+                          fg=COLORS['text'],
+                          relief="solid", 
+                          bd=1,
+                          width=35, 
+                          height=2, 
+                          anchor='w', 
+                          justify='left', 
+                          padx=10, 
+                          pady=5)
         button.pack(fill='x', padx=10, pady=5, ipadx=10)
+        
+        # Efeito hover
+        button.bind('<Enter>', lambda e, b=button: b.config(bg='#f8f8f8'))
+        button.bind('<Leave>', lambda e, b=button: b.config(bg=COLORS['white']))
     
     update_pagination(page, len(filtered_products), products_per_page)
 
 def show_product_details(product):
     details_window = tk.Toplevel(root)
     details_window.title(f"Detalhes de {product['nome']}")
-    details_window.config(bg="#f0f0f0")
+    details_window.config(bg=COLORS['background'])
+    details_window.geometry("500x500")  # Aumentei a altura para acomodar o botão
 
-    tk.Label(details_window, text="Nome:", font=("Arial", 14, "bold"), bg="#f0f0f0", fg="#333").pack(pady=5)
-    tk.Label(details_window, text=product['nome'], font=("Arial", 12), bg="#f0f0f0", fg="#333").pack(pady=5, fill="x", padx=10)
+    # Frame principal com padding
+    main_frame = tk.Frame(details_window, bg=COLORS['background'], padx=20, pady=20)
+    main_frame.pack(fill="both", expand=True)
 
-    tk.Label(details_window, text="Descrição:", font=("Arial", 14, "bold"), bg="#f0f0f0", fg="#333").pack(pady=5)
-    tk.Label(details_window, text=product['descricao'], font=("Arial", 12), bg="#f0f0f0", fg="#333").pack(pady=5, fill="x", padx=10)
+    # Título
+    title_label = tk.Label(main_frame, 
+                          text=product['nome'],
+                          font=STYLES['title_font'],
+                          bg=COLORS['background'],
+                          fg=COLORS['text'])
+    title_label.pack(pady=(0, 20))
 
-    tk.Label(details_window, text="Imagem:", font=("Arial", 14, "bold"), bg="#f0f0f0", fg="#333").pack(pady=5)
-    tk.Label(details_window, text=product['imagem'], font=("Arial", 12), bg="#f0f0f0", fg="#333").pack(pady=5, fill="x", padx=10)
+    # Frame para os detalhes
+    details_frame = tk.Frame(main_frame, bg=COLORS['white'], padx=20, pady=20, relief="solid", bd=1)
+    details_frame.pack(fill="both", expand=True)
 
-    tk.Label(details_window, text="Link:", font=("Arial", 14, "bold"), bg="#f0f0f0", fg="#333").pack(pady=5)
-    tk.Label(details_window, text=product['link'], font=("Arial", 12), bg="#f0f0f0", fg="#333").pack(pady=5, fill="x", padx=10)
+    # Campos dos detalhes
+    fields = [
+        ("Descrição", product['descricao']),
+        ("Imagem", product['imagem']),
+        ("Link", product['link'])
+    ]
+    
+    for label_text, value in fields:
+        field_frame = tk.Frame(details_frame, bg=COLORS['white'])
+        field_frame.pack(fill="x", pady=10)
+        
+        label = tk.Label(field_frame,
+                        text=label_text + ":",
+                        font=STYLES['heading_font'],
+                        bg=COLORS['white'],
+                        fg=COLORS['text'])
+        label.pack(anchor="w")
+        
+        value_label = tk.Label(field_frame,
+                             text=value,
+                             font=STYLES['text_font'],
+                             bg=COLORS['white'],
+                             fg=COLORS['text'],
+                             wraplength=400)
+        value_label.pack(anchor="w", pady=(5, 0))
 
     def delete_product():
         confirm = messagebox.askyesno("Deseja apagar?", f"Você deseja apagar o produto {product['nome']}?")
@@ -59,7 +121,21 @@ def show_product_details(product):
                 details_window.destroy()
                 show_products()
 
-    delete_button = tk.Button(details_window, text="Excluir Produto", command=delete_product, font=("Arial", 12), bg="#e74c3c", fg="#fff")
+    # Frame para o botão de exclusão
+    button_frame = tk.Frame(main_frame, bg=COLORS['background'])
+    button_frame.pack(fill="x", pady=20)
+
+    # Botão de exclusão
+    delete_button = tk.Button(button_frame,
+                            text="Excluir Produto",
+                            command=delete_product,
+                            font=STYLES['button_font'],
+                            bg=COLORS['danger'],
+                            fg=COLORS['white'],
+                            relief="flat",
+                            padx=20,
+                            pady=10,
+                            width=20)
     delete_button.pack(pady=10)
 
 def add_product():
@@ -88,11 +164,27 @@ def update_pagination(page, total_products, products_per_page):
         widget.destroy()
     
     if page > 1:
-        prev_button = tk.Button(frame_pagination, text="Anterior", command=lambda: show_products(page-1), font=("Arial", 12), bg="#47ba00", fg="#fff", relief="flat", bd=0)
+        prev_button = tk.Button(frame_pagination, 
+                              text="Anterior", 
+                              command=lambda: show_products(page-1), 
+                              font=STYLES['button_font'], 
+                              bg=COLORS['primary'], 
+                              fg=COLORS['white'], 
+                              relief="flat", 
+                              padx=15,
+                              pady=5)
         prev_button.pack(side="left", padx=10)
     
     if page < total_pages:
-        next_button = tk.Button(frame_pagination, text="Próximo", command=lambda: show_products(page+1), font=("Arial", 12), bg="#47ba00", fg="#fff", relief="flat", bd=0)
+        next_button = tk.Button(frame_pagination, 
+                              text="Próximo", 
+                              command=lambda: show_products(page+1), 
+                              font=STYLES['button_font'], 
+                              bg=COLORS['primary'], 
+                              fg=COLORS['white'], 
+                              relief="flat",
+                              padx=15,
+                              pady=5)
         next_button.pack(side="right", padx=10)
 
 def search_products():
@@ -102,22 +194,68 @@ def search_products():
 root = tk.Tk()
 root.title("Gerenciador de Produtos")
 root.state('normal')
-root.config(bg="#f0f0f0")
+root.config(bg=COLORS['background'])
+root.geometry("600x700")
 
-frame_list = tk.Frame(root, bg="#f0f0f0")
-frame_list.pack(padx=20, pady=20, fill="both", expand=True)
+# Frame principal
+main_container = tk.Frame(root, bg=COLORS['background'], padx=20, pady=20)
+main_container.pack(fill="both", expand=True)
 
-frame_pagination = tk.Frame(root, bg="#f0f0f0")
-frame_pagination.pack(pady=10)
+# Título
+title_label = tk.Label(main_container,
+                      text="Gerenciador de Produtos",
+                      font=STYLES['title_font'],
+                      bg=COLORS['background'],
+                      fg=COLORS['text'])
+title_label.pack(pady=(0, 20))
 
-search_label = tk.Label(root, text="Buscar Produto:", font=("Arial", 14, "bold"), bg="#f0f0f0", fg="#333")
-search_label.pack(pady=5)
-search_entry = tk.Entry(root, font=("Arial", 12), width=35)
-search_entry.pack(pady=5)
-search_button = tk.Button(root, text="Buscar", command=search_products, font=("Arial", 12), bg="#47ba00", fg="#fff", relief="flat", bd=0)
-search_button.pack(pady=10)
+# Frame de busca
+search_frame = tk.Frame(main_container, bg=COLORS['white'], padx=20, pady=20, relief="solid", bd=1)
+search_frame.pack(fill="x", pady=(0, 20))
 
-add_button = tk.Button(root, text="Adicionar Produto", command=add_product, font=("Arial", 14), bg="#47ba00", fg="#fff", relief="flat", bd=0, width=20, height=2)
+search_label = tk.Label(search_frame,
+                       text="Buscar Produto:",
+                       font=STYLES['heading_font'],
+                       bg=COLORS['white'],
+                       fg=COLORS['text'])
+search_label.pack(pady=(0, 10))
+
+search_entry = tk.Entry(search_frame,
+                       font=STYLES['text_font'],
+                       width=35,
+                       relief="solid",
+                       bd=1)
+search_entry.pack(pady=(0, 10))
+
+search_button = tk.Button(search_frame,
+                         text="Buscar",
+                         command=search_products,
+                         font=STYLES['button_font'],
+                         bg=COLORS['primary'],
+                         fg=COLORS['white'],
+                         relief="flat",
+                         padx=20,
+                         pady=5)
+search_button.pack()
+
+# Frame da lista
+frame_list = tk.Frame(main_container, bg=COLORS['background'])
+frame_list.pack(fill="both", expand=True)
+
+# Frame de paginação
+frame_pagination = tk.Frame(main_container, bg=COLORS['background'])
+frame_pagination.pack(pady=20)
+
+# Botão de adicionar
+add_button = tk.Button(main_container,
+                      text="Adicionar Produto",
+                      command=add_product,
+                      font=STYLES['button_font'],
+                      bg=COLORS['primary'],
+                      fg=COLORS['white'],
+                      relief="flat",
+                      padx=20,
+                      pady=10)
 add_button.pack(pady=20)
 
 show_products()
