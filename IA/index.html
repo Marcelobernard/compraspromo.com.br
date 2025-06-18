@@ -161,16 +161,27 @@
 
     .initial-popup-buttons {
       display: flex;
-      gap: 15px;
+      flex-direction: column;
+      gap: 10px;
       justify-content: center;
       margin-top: 25px;
+      width: 100%;
+      max-width: 250px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .initial-popup button {
-      padding: 15px 35px;
+      padding: 15px 25px;
       border-radius: 25px;
       font-weight: 600;
       transition: all 0.3s ease;
+      width: 100%;
+      font-size: 14px;
+    }
+
+    .initial-popup .emoji {
+      font-size: 16px;
     }
 
     .grant-btn {
@@ -231,6 +242,29 @@
       margin: 0 5px;
     }
 
+    .images-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+      position: relative;
+    }
+
+    .camera-image, .family-image {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .arrow-emoji {
+      font-size: 24px;
+      filter: grayscale(100%);
+      opacity: 0.8;
+    }
+
     @media (max-width: 480px) {
       body {
         padding: 10px;
@@ -243,6 +277,15 @@
 
       .popup {
         padding: 25px;
+      }
+
+      .camera-image, .family-image {
+        width: 80px;
+        height: 80px;
+      }
+
+      .arrow-emoji {
+        font-size: 20px;
       }
     }
   </style>
@@ -267,6 +310,11 @@
     <div class="initial-popup-buttons">
       <button class="grant-btn" id="grantBtn">Vamos Começar! <span class="emoji">🚀</span></button>
       <button class="deny-btn" id="denyBtn">Agora Não <span class="emoji">⏰</span></button>
+    </div>
+    <div class="images-container">
+      <img src="camera1.png" alt="Câmera" class="camera-image">
+      <span class="arrow-emoji">➡️</span>
+      <img src="familia1.png" alt="Família" class="family-image">
     </div>
   </div>
 
